@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Кредитный калькулятор</title>
     <style>
         * {
@@ -16,59 +16,74 @@
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: #333;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 5px;
         }
 
         header {
             text-align: center;
             color: white;
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 20px;
+            padding: 15px 10px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        header p {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.9;
         }
 
         .calculator {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
             .calculator {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
         }
 
         .input-section, .results-section {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            margin-bottom: 15px;
+            color: #2575fc;
         }
 
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #444;
-            font-size: 1.1rem;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
         }
 
         input, select {
@@ -78,6 +93,8 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         input:focus, select:focus {
@@ -85,39 +102,82 @@
             border-color: #2575fc;
         }
 
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+        }
+
         .range-value {
             display: inline-block;
-            margin-left: 10px;
+            margin-left: 8px;
             font-weight: bold;
             color: #2575fc;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            min-width: 80px;
+            text-align: right;
         }
 
         .slider-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        input[type="range"] {
-            flex: 1;
+        @media (max-width: 480px) {
+            .slider-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .slider-container input[type="range"] {
+                order: 1;
+                width: 100%;
+            }
+            
+            .slider-container input[type="number"] {
+                order: 2;
+                width: 100%;
+            }
+            
+            .slider-container .range-value {
+                order: 3;
+                text-align: center;
+                margin-left: 0;
+                margin-top: 5px;
+                min-width: auto;
+            }
         }
 
         .button-group {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+            }
         }
 
         button {
             flex: 1;
-            padding: 15px;
+            padding: 14px;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            min-height: 50px;
+        }
+
+        @media (max-width: 480px) {
+            button {
+                width: 100%;
+            }
         }
 
         .calculate-btn {
@@ -125,7 +185,7 @@
             color: white;
         }
 
-        .calculate-btn:hover {
+        .calculate-btn:hover, .calculate-btn:active {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
         }
@@ -135,36 +195,37 @@
             color: #333;
         }
 
-        .reset-btn:hover {
+        .reset-btn:hover, .reset-btn:active {
             background: #e0e0e0;
             transform: translateY(-2px);
         }
 
         .result-item {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-left: 5px solid #2575fc;
         }
 
         .result-label {
-            font-size: 0.9rem;
+            font-size: clamp(0.85rem, 2vw, 0.9rem);
             color: #666;
             margin-bottom: 5px;
         }
 
         .result-value {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
             font-weight: bold;
             color: #2575fc;
+            word-break: break-word;
         }
 
         .first-year-results {
             background: #f0f7ff;
-            padding: 25px;
+            padding: 20px 15px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
             border: 2px solid #2575fc;
         }
 
@@ -172,59 +233,88 @@
             color: #2575fc;
             margin-bottom: 15px;
             text-align: center;
+            font-size: clamp(1.1rem, 2.8vw, 1.3rem);
         }
 
         .first-year-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .first-year-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .schedule-section {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
+            padding: 20px 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         .schedule-controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (min-width: 480px) {
+            .schedule-controls {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .pagination {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            justify-content: center;
         }
 
         .pagination button {
             padding: 8px 15px;
             font-size: 0.9rem;
+            min-height: auto;
+            flex: 0 0 auto;
+        }
+
+        .pagination span {
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: center;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
         }
 
         th {
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
-            padding: 15px;
+            padding: 12px 6px;
             text-align: center;
             position: sticky;
             top: 0;
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            white-space: nowrap;
         }
 
         td {
-            padding: 12px;
+            padding: 10px 5px;
             text-align: center;
             border-bottom: 1px solid #eee;
+            word-break: break-word;
         }
 
         tr:hover {
@@ -254,34 +344,124 @@
         footer {
             text-align: center;
             color: white;
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 20px;
+            padding: 15px;
             opacity: 0.8;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
 
         .chart-container {
-            height: 300px;
-            margin: 30px 0;
+            height: 250px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 480px) {
+            .chart-container {
+                height: 220px;
+            }
         }
 
         .summary {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        @media (max-width: 768px) {
-            .summary, .first-year-grid {
+        @media (max-width: 480px) {
+            .summary {
                 grid-template-columns: 1fr;
             }
         }
 
         .summary-item {
             background: #f0f7ff;
-            padding: 15px;
+            padding: 12px 8px;
             border-radius: 8px;
             text-align: center;
+        }
+
+        .summary-item div:first-child {
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .summary-item div:last-child {
+            font-weight: bold;
+            color: #2575fc;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+        }
+
+        /* Улучшения для мобильной навигации */
+        .mobile-hint {
+            display: none;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-hint {
+                display: block;
+            }
+        }
+
+        /* Улучшение скролла для мобильных */
+        .table-container {
+            overflow-x: auto;
+            max-height: 400px;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        /* Адаптивные таблицы для очень маленьких экранов */
+        @media (max-width: 360px) {
+            th, td {
+                padding: 8px 3px;
+                font-size: 0.7rem;
+            }
+            
+            .pagination button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Улучшение касания для мобильных */
+        button, input[type="range"], input[type="number"], select {
+            touch-action: manipulation;
+        }
+
+        /* Увеличение области касания для кнопок на мобильных */
+        @media (max-width: 768px) {
+            button {
+                min-height: 48px;
+            }
+            
+            input, select {
+                font-size: 16px; /* Предотвращает автоматическое увеличение в iOS */
+            }
+        }
+
+        /* Оптимизация для landscape ориентации */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .calculator {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .chart-container {
+                height: 180px;
+            }
+            
+            .table-container {
+                max-height: 250px;
+            }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -291,6 +471,7 @@
         <header>
             <h1>Кредитный калькулятор</h1>
             <p>Расчет аннуитетных платежей с графиком погашения</p>
+            <div class="mobile-hint">Листайте таблицу влево-вправо для просмотра всех данных</div>
         </header>
 
         <div class="calculator">
@@ -399,7 +580,7 @@
                 </div>
             </div>
 
-            <div style="overflow-x: auto; max-height: 500px;">
+            <div class="table-container">
                 <table id="paymentSchedule">
                     <thead>
                         <tr>
@@ -487,6 +668,14 @@
         let itemsPerPage = 12;
         let paymentSchedule = [];
         let chart = null;
+
+        // Адаптивное количество элементов на странице
+        function getItemsPerPage() {
+            const width = window.innerWidth;
+            if (width < 480) return 6;
+            if (width < 768) return 8;
+            return 12;
+        }
 
         // Расчет аннуитетного платежа
         function calculateAnnuityPayment(principal, monthlyRate, months) {
@@ -595,7 +784,9 @@
             currentPage = page;
             const scheduleBody = document.getElementById('scheduleBody');
             scheduleBody.innerHTML = '';
-
+            
+            itemsPerPage = getItemsPerPage();
+            
             const startIndex = (page - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, paymentSchedule.length);
 
@@ -644,97 +835,95 @@
             }).format(amount);
         }
 
-       // Обновление круговой диаграммы с исправленной обработкой копеек
-function updateChart() {
-    const ctx = document.getElementById('paymentChart').getContext('2d');
-    
-    if (chart) {
-        chart.destroy();
-    }
+        // Обновление круговой диаграммы
+        function updateChart() {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
 
-    // Получаем сумму кредита
-    const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-    
-    // Получаем текст переплаты
-    const overpaymentText = document.getElementById('overpayment').textContent;
-    
-    // Функция для корректного извлечения числа из отформатированной строки
-    function parseCurrencyToNumber(currencyString) {
-        // Удаляем все нецифровые символы, кроме точки, запятой и минуса
-        let cleanString = currencyString.replace(/[^\d.,-]/g, '');
-        
-        // Заменяем запятую на точку (для русской локали)
-        cleanString = cleanString.replace(',', '.');
-        
-        // Преобразуем в число
-        const number = parseFloat(cleanString);
-        
-        // Проверяем, является ли результат числом
-        return isNaN(number) ? 0 : number;
-    }
-    
-    // Парсим переплату с помощью новой функции
-    const overpayment = parseCurrencyToNumber(overpaymentText);
-    
-    // Для диаграммы используем целые рубли (округленные значения)
-    // Это нужно потому, что диаграмма показывает основные соотношения
-    const loanAmountForChart = Math.round(loanAmount);
-    const overpaymentForChart = Math.round(overpayment);
+            // Получаем сумму кредита
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            
+            // Получаем текст переплаты
+            const overpaymentText = document.getElementById('overpayment').textContent;
+            
+            // Функция для корректного извлечения числа из отформатированной строки
+            function parseCurrencyToNumber(currencyString) {
+                // Удаляем все нецифровые символы, кроме точки, запятой и минуса
+                let cleanString = currencyString.replace(/[^\d.,-]/g, '');
+                
+                // Заменяем запятую на точку (для русской локали)
+                cleanString = cleanString.replace(',', '.');
+                
+                // Преобразуем в число
+                const number = parseFloat(cleanString);
+                
+                // Проверяем, является ли результат числом
+                return isNaN(number) ? 0 : number;
+            }
+            
+            // Парсим переплату с помощью новой функции
+            const overpayment = parseCurrencyToNumber(overpaymentText);
+            
+            // Для диаграммы используем целые рубли (округленные значения)
+            const loanAmountForChart = Math.round(loanAmount);
+            const overpaymentForChart = Math.round(overpayment);
 
-    chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Основной долг', 'Проценты'],
-            datasets: [{
-                // Используем округленные значения для диаграммы
-                data: [loanAmountForChart, overpaymentForChart],
-                backgroundColor: [
-                    'rgba(37, 117, 252, 0.8)',
-                    'rgba(106, 17, 203, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(37, 117, 252, 1)',
-                    'rgba(106, 17, 203, 1)'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        font: {
-                            size: 14
-                        }
-                    }
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Основной долг', 'Проценты'],
+                    datasets: [{
+                        data: [loanAmountForChart, overpaymentForChart],
+                        backgroundColor: [
+                            'rgba(37, 117, 252, 0.8)',
+                            'rgba(106, 17, 203, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(37, 117, 252, 1)',
+                            'rgba(106, 17, 203, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: window.innerWidth < 480 ? 12 : 14
+                                }
                             }
-                            
-                            // В подсказках показываем точные суммы
-                            if (context.label === 'Основной долг') {
-                                label += formatCurrency(loanAmount);
-                            } else {
-                                label += formatCurrency(overpayment);
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    
+                                    if (context.label === 'Основной долг') {
+                                        label += formatCurrency(loanAmount);
+                                    } else {
+                                        label += formatCurrency(overpayment);
+                                    }
+                                    
+                                    return label;
+                                }
                             }
-                            
-                            return label;
                         }
                     }
                 }
-            }
+            });
         }
-    });
-}
+
         // Сброс калькулятора
         function resetCalculator() {
             document.getElementById('loanAmount').value = 1000000;
@@ -779,6 +968,16 @@ function updateChart() {
                     nextPage();
                 } else if (e.key === 'ArrowLeft') {
                     prevPage();
+                }
+            });
+            
+            // Перерасчет при изменении размера окна
+            window.addEventListener('resize', function() {
+                if (paymentSchedule.length > 0) {
+                    displaySchedulePage(currentPage);
+                }
+                if (chart) {
+                    updateChart();
                 }
             });
         });
