@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кредитный калькулятор</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section, .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 1.1rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2575fc;
+        }
+
+        .range-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #2575fc;
+            font-size: 1.2rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+        }
+
+        .reset-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .result-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #2575fc;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2575fc;
+        }
+
+        .first-year-results {
+            background: #f0f7ff;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #2575fc;
+        }
+
+        .first-year-results h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .first-year-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .schedule-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .schedule-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagination button {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .interest-cell {
+            color: #e53935;
+            font-weight: bold;
+        }
+
+        .principal-cell {
+            color: #43a047;
+            font-weight: bold;
+        }
+
+        .remaining-cell {
+            color: #fb8c00;
+            font-weight: bold;
+        }
+
+        .current-page {
+            background-color: #2575fc;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 30px 0;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .summary, .first-year-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .summary-item {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Кредитный калькулятор</h1>
+            <p>Расчет аннуитетных платежей с графиком погашения</p>
+        </header>
+
+        <div class="calculator">
+            <div class="input-section">
+                <h2>Параметры кредита</h2>
+                <div class="input-group">
+                    <label for="loanAmount">Сумма кредита (руб.)</label>
+                    <div class="slider-container">
+                        <input type="range" id="loanAmountSlider" min="10000" max="10000000" step="10000" value="1000000">
+                        <input type="number" id="loanAmount" min="10000" max="10000000" step="10000" value="1000000">
+                        <span class="range-value" id="loanAmountValue">1 000 000 ₽</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="interestRate">Процентная ставка (% годовых)</label>
+                    <div class="slider-container">
+                        <input type="range" id="interestRateSlider" min="1" max="30" step="0.1" value="10">
+                        <input type="number" id="interestRate" min="1" max="30" step="0.1" value="10">
+                        <span class="range-value" id="interestRateValue">10%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="loanTerm">Срок кредита (месяцев)</label>
+                    <div class="slider-container">
+                        <input type="range" id="loanTermSlider" min="1" max="360" step="1" value="60">
+                        <input type="number" id="loanTerm" min="1" max="360" step="1" value="60">
+                        <span class="range-value" id="loanTermValue">60 мес.</span>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="calculate-btn" onclick="calculateLoan()">Рассчитать кредит</button>
+                    <button class="reset-btn" onclick="resetCalculator()">Сбросить</button>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Результаты расчета</h2>
+                <div id="results">
+                    <div class="result-item">
+                        <div class="result-label">Ежемесячный платеж</div>
+                        <div class="result-value" id="monthlyPayment">0 ₽</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Общая сумма выплат</div>
+                        <div class="result-value" id="totalPayment">0 ₽</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Переплата по кредиту</div>
+                        <div class="result-value" id="overpayment">0 ₽</div>
+                    </div>
+
+                    <div class="first-year-results">
+                        <h3>Платежи за первый год</h3>
+                        <div class="first-year-grid">
+                            <div class="result-item">
+                                <div class="result-label">Сумма выплат за год</div>
+                                <div class="result-value" id="firstYearTotal">0 ₽</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">Сумма процентов за год</div>
+                                <div class="result-value" id="firstYearInterest">0 ₽</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">Сумма основного долга за год</div>
+                                <div class="result-value" id="firstYearPrincipal">0 ₽</div>
+                            </div>
+                            <div class="result-item">
+                                <div class="result-label">Уменьшение долга за год</div>
+                                <div class="result-value" id="firstYearReduction">0 ₽</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+
+                    <div class="summary">
+                        <div class="summary-item">
+                            <div>Ставка</div>
+                            <div id="summaryRate">0%</div>
+                        </div>
+                        <div class="summary-item">
+                            <div>Срок</div>
+                            <div id="summaryTerm">0 мес.</div>
+                        </div>
+                        <div class="summary-item">
+                            <div>Сумма</div>
+                            <div id="summaryAmount">0 ₽</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="schedule-section">
+            <div class="schedule-controls">
+                <h2>График погашения кредита</h2>
+                <div class="pagination">
+                    <button onclick="prevPage()">← Назад</button>
+                    <span id="pageInfo">Страница 1 из 1</span>
+                    <button onclick="nextPage()">Вперед →</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto; max-height: 500px;">
+                <table id="paymentSchedule">
+                    <thead>
+                        <tr>
+                            <th>Месяц</th>
+                            <th>Ежемесячный платеж</th>
+                            <th>Погашение процентов</th>
+                            <th>Погашение основного долга</th>
+                            <th>Остаток долга</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleBody">
+                        <!-- Данные будут вставлены здесь -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Кредитный калькулятор | Для точных расчетов обратитесь в банк</p>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация элементов управления
+        function initializeControls() {
+            // Связка слайдеров и полей ввода
+            const loanAmountSlider = document.getElementById('loanAmountSlider');
+            const loanAmountInput = document.getElementById('loanAmount');
+            const loanAmountValue = document.getElementById('loanAmountValue');
+
+            const interestRateSlider = document.getElementById('interestRateSlider');
+            const interestRateInput = document.getElementById('interestRate');
+            const interestRateValue = document.getElementById('interestRateValue');
+
+            const loanTermSlider = document.getElementById('loanTermSlider');
+            const loanTermInput = document.getElementById('loanTerm');
+            const loanTermValue = document.getElementById('loanTermValue');
+
+            // Форматирование чисел
+            function formatNumber(num) {
+                return new Intl.NumberFormat('ru-RU').format(num);
+            }
+
+            // Обновление суммы кредита
+            function updateLoanAmount(value) {
+                loanAmountSlider.value = value;
+                loanAmountInput.value = value;
+                loanAmountValue.textContent = formatNumber(value) + ' ₽';
+            }
+
+            // Обновление процентной ставки
+            function updateInterestRate(value) {
+                interestRateSlider.value = value;
+                interestRateInput.value = value;
+                interestRateValue.textContent = value + '%';
+            }
+
+            // Обновление срока кредита
+            function updateLoanTerm(value) {
+                loanTermSlider.value = value;
+                loanTermInput.value = value;
+                loanTermValue.textContent = value + ' мес.';
+            }
+
+            // Обработчики событий для суммы кредита
+            loanAmountSlider.addEventListener('input', (e) => updateLoanAmount(e.target.value));
+            loanAmountInput.addEventListener('input', (e) => updateLoanAmount(e.target.value));
+
+            // Обработчики событий для процентной ставки
+            interestRateSlider.addEventListener('input', (e) => updateInterestRate(e.target.value));
+            interestRateInput.addEventListener('input', (e) => updateInterestRate(e.target.value));
+
+            // Обработчики событий для срока кредита
+            loanTermSlider.addEventListener('input', (e) => updateLoanTerm(e.target.value));
+            loanTermInput.addEventListener('input', (e) => updateLoanTerm(e.target.value));
+
+            // Инициализация значений
+            updateLoanAmount(loanAmountInput.value);
+            updateInterestRate(interestRateInput.value);
+            updateLoanTerm(loanTermInput.value);
+        }
+
+        // Глобальные переменные для графика и пагинации
+        let currentPage = 1;
+        let itemsPerPage = 12;
+        let paymentSchedule = [];
+        let chart = null;
+
+        // Расчет аннуитетного платежа
+        function calculateAnnuityPayment(principal, monthlyRate, months) {
+            if (monthlyRate === 0) {
+                return principal / months;
+            }
+            const coefficient = (monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                               (Math.pow(1 + monthlyRate, months) - 1);
+            return principal * coefficient;
+        }
+
+        // Основная функция расчета
+        function calculateLoan() {
+            // Получение входных данных
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const annualRate = parseFloat(document.getElementById('interestRate').value);
+            const months = parseInt(document.getElementById('loanTerm').value);
+
+            // Проверка входных данных
+            if (isNaN(loanAmount) || isNaN(annualRate) || isNaN(months) ||
+                loanAmount <= 0 || annualRate <= 0 || months <= 0) {
+                alert('Пожалуйста, введите корректные данные!');
+                return;
+            }
+
+            // Расчет месячной ставки
+            const monthlyRate = annualRate / 12 / 100;
+
+            // Расчет аннуитетного платежа
+            const monthlyPayment = calculateAnnuityPayment(loanAmount, monthlyRate, months);
+
+            // Основные расчеты
+            const totalPayment = monthlyPayment * months;
+            const overpayment = totalPayment - loanAmount;
+
+            // Обновление основных результатов
+            document.getElementById('monthlyPayment').textContent = formatCurrency(monthlyPayment);
+            document.getElementById('totalPayment').textContent = formatCurrency(totalPayment);
+            document.getElementById('overpayment').textContent = formatCurrency(overpayment);
+
+            // Генерация графика платежей
+            generatePaymentSchedule(loanAmount, monthlyRate, monthlyPayment, months);
+
+            // Обновление графика
+            updateChart();
+
+            // Обновление сводки
+            document.getElementById('summaryRate').textContent = annualRate + '%';
+            document.getElementById('summaryTerm').textContent = months + ' мес.';
+            document.getElementById('summaryAmount').textContent = formatCurrency(loanAmount);
+        }
+
+        // Генерация графика платежей
+        function generatePaymentSchedule(loanAmount, monthlyRate, monthlyPayment, months) {
+            paymentSchedule = [];
+            let remainingBalance = loanAmount;
+            let firstYearTotal = 0;
+            let firstYearInterest = 0;
+            let firstYearPrincipal = 0;
+
+            for (let month = 1; month <= months; month++) {
+                // Расчет процентов и основного долга
+                const interestPayment = remainingBalance * monthlyRate;
+                let principalPayment = monthlyPayment - interestPayment;
+
+                // Корректировка последнего платежа
+                if (month === months) {
+                    principalPayment = remainingBalance;
+                }
+
+                // Обновление остатка
+                remainingBalance -= principalPayment;
+                if (remainingBalance < 0.01) {
+                    remainingBalance = 0;
+                }
+
+                // Сбор данных за первый год
+                if (month <= 12) {
+                    firstYearTotal += monthlyPayment;
+                    firstYearInterest += interestPayment;
+                    firstYearPrincipal += principalPayment;
+                }
+
+                // Добавление в график
+                paymentSchedule.push({
+                    month: month,
+                    payment: monthlyPayment,
+                    interest: interestPayment,
+                    principal: principalPayment,
+                    remaining: remainingBalance
+                });
+            }
+
+            // Обновление данных за первый год
+            document.getElementById('firstYearTotal').textContent = formatCurrency(firstYearTotal);
+            document.getElementById('firstYearInterest').textContent = formatCurrency(firstYearInterest);
+            document.getElementById('firstYearPrincipal').textContent = formatCurrency(firstYearPrincipal);
+            document.getElementById('firstYearReduction').textContent = formatCurrency(firstYearPrincipal);
+
+            // Отображение графика платежей
+            displaySchedulePage(1);
+        }
+
+        // Отображение страницы графика платежей
+        function displaySchedulePage(page) {
+            currentPage = page;
+            const scheduleBody = document.getElementById('scheduleBody');
+            scheduleBody.innerHTML = '';
+
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, paymentSchedule.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const item = paymentSchedule[i];
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${item.month}</td>
+                    <td>${formatCurrency(item.payment)}</td>
+                    <td class="interest-cell">${formatCurrency(item.interest)}</td>
+                    <td class="principal-cell">${formatCurrency(item.principal)}</td>
+                    <td class="remaining-cell">${formatCurrency(item.remaining)}</td>
+                `;
+
+                scheduleBody.appendChild(row);
+            }
+
+            // Обновление информации о странице
+            const totalPages = Math.ceil(paymentSchedule.length / itemsPerPage);
+            document.getElementById('pageInfo').textContent = 
+                `Страница ${page} из ${totalPages}`;
+        }
+
+        // Пагинация
+        function nextPage() {
+            const totalPages = Math.ceil(paymentSchedule.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                displaySchedulePage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                displaySchedulePage(currentPage - 1);
+            }
+        }
+
+        // Форматирование валюты
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+       // Обновление круговой диаграммы с исправленной обработкой копеек
+function updateChart() {
+    const ctx = document.getElementById('paymentChart').getContext('2d');
+    
+    if (chart) {
+        chart.destroy();
+    }
+
+    // Получаем сумму кредита
+    const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+    
+    // Получаем текст переплаты
+    const overpaymentText = document.getElementById('overpayment').textContent;
+    
+    // Функция для корректного извлечения числа из отформатированной строки
+    function parseCurrencyToNumber(currencyString) {
+        // Удаляем все нецифровые символы, кроме точки, запятой и минуса
+        let cleanString = currencyString.replace(/[^\d.,-]/g, '');
+        
+        // Заменяем запятую на точку (для русской локали)
+        cleanString = cleanString.replace(',', '.');
+        
+        // Преобразуем в число
+        const number = parseFloat(cleanString);
+        
+        // Проверяем, является ли результат числом
+        return isNaN(number) ? 0 : number;
+    }
+    
+    // Парсим переплату с помощью новой функции
+    const overpayment = parseCurrencyToNumber(overpaymentText);
+    
+    // Для диаграммы используем целые рубли (округленные значения)
+    // Это нужно потому, что диаграмма показывает основные соотношения
+    const loanAmountForChart = Math.round(loanAmount);
+    const overpaymentForChart = Math.round(overpayment);
+
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Основной долг', 'Проценты'],
+            datasets: [{
+                // Используем округленные значения для диаграммы
+                data: [loanAmountForChart, overpaymentForChart],
+                backgroundColor: [
+                    'rgba(37, 117, 252, 0.8)',
+                    'rgba(106, 17, 203, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(37, 117, 252, 1)',
+                    'rgba(106, 17, 203, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            
+                            // В подсказках показываем точные суммы
+                            if (context.label === 'Основной долг') {
+                                label += formatCurrency(loanAmount);
+                            } else {
+                                label += formatCurrency(overpayment);
+                            }
+                            
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+        // Сброс калькулятора
+        function resetCalculator() {
+            document.getElementById('loanAmount').value = 1000000;
+            document.getElementById('interestRate').value = 10;
+            document.getElementById('loanTerm').value = 60;
+
+            initializeControls();
+            
+            document.getElementById('monthlyPayment').textContent = '0 ₽';
+            document.getElementById('totalPayment').textContent = '0 ₽';
+            document.getElementById('overpayment').textContent = '0 ₽';
+            
+            document.getElementById('firstYearTotal').textContent = '0 ₽';
+            document.getElementById('firstYearInterest').textContent = '0 ₽';
+            document.getElementById('firstYearPrincipal').textContent = '0 ₽';
+            document.getElementById('firstYearReduction').textContent = '0 ₽';
+
+            document.getElementById('summaryRate').textContent = '0%';
+            document.getElementById('summaryTerm').textContent = '0 мес.';
+            document.getElementById('summaryAmount').textContent = '0 ₽';
+
+            paymentSchedule = [];
+            document.getElementById('scheduleBody').innerHTML = '';
+            document.getElementById('pageInfo').textContent = 'Страница 1 из 1';
+
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeControls();
+            
+            // Автоматический расчет при загрузке
+            calculateLoan();
+            
+            // Добавление обработчиков клавиш для пагинации
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    nextPage();
+                } else if (e.key === 'ArrowLeft') {
+                    prevPage();
+                }
+            });
+        });
+
+        // Экспорт графика в PDF (дополнительная функция)
+        function exportToPDF() {
+            alert('Для экспорта в PDF воспользуйтесь функцией печати браузера (Ctrl+P)');
+        }
+    </script>
+</body>
+</html>
